@@ -2,8 +2,8 @@
 # slice_sampler.py
 #
 # Coded by: Koji KITANO <koji.kitano52@gmail.com>,
-# Human Systems Laboratory, Department of Systems Science,
-# Graduate school of Informatics, Kyoto University.
+# Human System Laboratory, Department of Systems Science,
+# Graduate School of Informatics, Kyoto University.
 
 
 import sys
