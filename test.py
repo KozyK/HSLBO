@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import HSLBO
+import hslbo
 import matplotlib.pyplot as plt
 
 from HSLBO.example.branin import branin, branin_modified
