@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 
 from HSLBO.example.branin import branin, branin_modified
 
+
+# 最適解の推移をプロットする
 def sequential_plot(bo, itertimes):
     MAXIMUM_BRANIN = 0.397887
 
