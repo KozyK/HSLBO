@@ -4,7 +4,7 @@ import numpy as np
 import hslbo
 import matplotlib.pyplot as plt
 
-from HSLBO.example.branin import branin, branin_modified
+from hslbo.example.branin import branin, branin_modified
 
 
 # 最適解の推移をプロットする
@@ -32,15 +32,23 @@ def sequential_plot(bo, itertimes):
 
 
 if __name__=='__main__':
-    func = branin
+
+    func = branin_modified
+
     num_dims = 2
+
+    # 最初の一点を除く探索回数
+    num_iter = 10
+
     lower = np.array([-5,0]) # 下界
     upper = np.array([10,15]) # 上界
 
-    bo = HSLBO.BO(func, num_dims, lower, upper, acq_name="mutual_information")
+    acq_options = {"mcmc_iters": 300, "burnin": 3000}
 
-    #bo.sequential_update(150)
-    sequential_plot(bo, 300)
+    bo = hslbo.BO(func, num_dims, lower, upper, acq_name="mutual_information", acq_options=acq_options)
+    
+    bo.sequential_update(num_iter)
+    #sequential_plot(bo, 300)
 
     inputs = bo.inputs
     outputs = bo.values
@@ -48,5 +56,5 @@ if __name__=='__main__':
 
     print("Inputs:\n{0}".format(inputs))
     print("Outputs:\n{0}".format(outputs))
-    print("Current best:\n{0}".format(current_best[0]))
-    print("Current best:\n{0}".format(current_best[1]))
+    print("Current optimal point:\n{0}".format(current_best[0]))
+    print("Current optimum:\n{0}".format(current_best[1]))

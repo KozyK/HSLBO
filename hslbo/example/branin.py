@@ -5,6 +5,8 @@
 # Human System Laboratory, Department of Systems Science,
 # Graduate School of Informatics, Kyoto University.
 
+import numpy as np
+
 def branin(x):
     """ Branin function
 

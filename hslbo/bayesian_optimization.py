@@ -51,6 +51,12 @@ class BO():
         acq_options : dict
             Paramters for acquisition function
             獲得関数に渡すパラメータの辞書．デフォルトは空辞書
+        mcmc_iters : int
+            The number of MCMC samples
+            MCMCで採用するサンプルの数．デフォルト10
+        burnin : int
+            The number of burnin samples
+            バーンインで捨てるサンプルの数．デフォルト100
 
 
     TODO: 入力の正規化(操作変数と条件変数で変える？現時点では条件変数は既に正規化されていることを前提としている．)

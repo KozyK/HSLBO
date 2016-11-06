@@ -20,7 +20,7 @@ from ..utils            import priors
 
 
 DEFAULT_MCMC_ITERS = 10
-DEFAULT_BURNIN     = 1000
+DEFAULT_BURNIN     = 100
 
 class GP(AbstractModel):
     """ ガウス過程回帰

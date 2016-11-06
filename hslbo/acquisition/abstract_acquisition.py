@@ -18,6 +18,9 @@ from ..utils.multistart_minimizer import multistart_minimizer
 
 DEFAULT_NUM_CANDIDATE = 100
 
+DEFAULT_MCMC_ITERS = 10
+DEFAULT_BURNIN     = 100
+
 class AbstractAcquisition(object):
     __metaclass__ = ABCMeta
 
@@ -36,8 +39,11 @@ class AbstractAcquisition(object):
         # 探索に用いる初期点の数
         self.num_candidate = int(options.get("num_candidate", DEFAULT_NUM_CANDIDATE))
 
+        mcmc_iters = int(options.get("mcmc_iters", DEFAULT_MCMC_ITERS))
+        burnin = int(options.get("burnin", DEFAULT_BURNIN))
+
         # ガウス過程回帰の初期化
-        self.model = GP(self.num_dims)
+        self.model = GP(self.num_dims, mcmc_iters=mcmc_iters, burnin=burnin)
 
         # オプションの代入
         self.set_options(options)
