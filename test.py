@@ -8,6 +8,7 @@ from hslbo.example.branin import branin, branin_modified
 
 
 # 最適解の推移をプロットする
+# TODO: 内部で最適化するのではなく，探索終了後にデータを与えることでプロットする
 def sequential_plot(bo, itertimes):
     MAXIMUM_BRANIN = 0.397887
 
@@ -46,7 +47,7 @@ if __name__=='__main__':
     acq_options = {"mcmc_iters": 300, "burnin": 3000}
 
     bo = hslbo.BO(func, num_dims, lower, upper, acq_name="mutual_information", acq_options=acq_options)
-    
+
     bo.sequential_update(num_iter)
     #sequential_plot(bo, 300)
 

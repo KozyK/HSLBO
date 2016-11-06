@@ -184,6 +184,15 @@ class BO():
         # _next_searchにおける関数値を評価して格納
         self._add_data(self._next_search, self._evaluate(self._next_search))
 
+    def history(values):
+        """最良の観測値の履歴を返す"""
+        opt_idx = []
+        for i in range(self.values.shape[0]):
+            opt_idx.append(np.min(self.values[:i+1]))
+        x_hist = self.inputs[opt_idx]
+        f_hist = self.values[opt_idx]
+        return x_hist, f_hist
+
     @property
     def current_best(self):
         """ 最良の観測値を返す """
