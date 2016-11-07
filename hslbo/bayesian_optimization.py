@@ -184,11 +184,12 @@ class BO():
         # _next_searchにおける関数値を評価して格納
         self._add_data(self._next_search, self._evaluate(self._next_search))
 
-    def history(values):
+    @property
+    def history(self):
         """最良の観測値の履歴を返す"""
         opt_idx = []
-        for i in range(self.values.shape[0]):
-            opt_idx.append(np.min(self.values[:i+1]))
+        for i in range(self.values.size):
+            opt_idx.append(np.argmin(self.values[:i+1]))
         x_hist = self.inputs[opt_idx]
         f_hist = self.values[opt_idx]
         return x_hist, f_hist
@@ -196,8 +197,8 @@ class BO():
     @property
     def current_best(self):
         """ 最良の観測値を返す """
-        idx_min = np.argsort(self._values, axis=0)
-        return self.inputs[idx_min][0],  self._values[idx_min][0]
+        idx_min = np.argmin(self._values, axis=0)
+        return self.inputs[idx_min],  np.squeeze(self._values[idx_min])
 
 
     @property
@@ -225,4 +226,4 @@ class BO():
 
     @property
     def values(self):
-        return self._values
+        return np.squeeze(self._values)

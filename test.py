@@ -1,61 +1,115 @@
 # -*- coding: utf-8 -*-
 
-import numpy as np
-import hslbo
-import matplotlib.pyplot as plt
+if __name__=='__main__':
+    import os
+    import time
 
-from hslbo.example.branin import branin, branin_modified
+    try:
+        import cPickle as pickle
+    except:
+        import pickle
+
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    import numpy as np
+    import hslbo
+    from hslbo.example.branin import branin, branin_modified, branin_modified_with_noise
+
+    # Modified Branin function
+    func = branin_modified_with_noise
+
+    # 問題の次元
+    num_dims = 2
+
+    # 探索回数(探索点の数)
+    num_iter = 5
+
+    # 探索空間の設定
+    lower = np.array([-5,0])
+    upper = np.array([10,15])
+
+    # MCMCの回数を指定
+    acq_options = {"mcmc_iters": 300, "burnin": 3000}
+
+    # シミュレーションの回数
+    num_simulation = 20
+
+    # シミュレーションの準備
+    total_time = 0
+
+    # 結果を格納するリスト
+    results =[]
+
+    for i in range(num_simulation):
+        #タイマーをスタート
+        start = time.time()
+
+        # BOインスタンスを生成
+        bo = hslbo.BO(func, num_dims, lower, upper, acq_name="mutual_information", acq_options=acq_options)
+
+        # 最初の1点は初期化した時に探索されるので-1
+        bo.sequential_update(num_iter-1)
+
+        # タイマーをストップ
+        elapsed_time = time.time() - start
+        total_time += elapsed_time
+
+        # 得られた入力の探索点
+        inputs = bo.inputs
+        # 得られた出力の観測値
+        values = bo.values
+        # 最適点と最適値の推移
+        opt_x_hist, opt_f_hist = bo.history
+
+        # 結果を辞書にまとめる
+        result = {"inputs":inputs, "values":values, "opt_x_hist": opt_x_hist, "opt_f_hist": opt_f_hist}
+
+        # 結果をリストに追加
+        results.append(result)
 
 
-# 最適解の推移をプロットする
-# TODO: 内部で最適化するのではなく，探索終了後にデータを与えることでプロットする
-def sequential_plot(bo, itertimes):
-    MAXIMUM_BRANIN = 0.397887
+    # 結果をオブジェクトとしてそのまま保存
+    base = os.path.dirname(__file__)
+    print(base)
+    name = os.path.join(base, 'result/result01_GPMI_noiseless.pickle')
+    with open(name, mode='wb') as f:
+        pickle.dump(results,f)
 
-    num =[]
-    optimum = []
+    # 探索にかかった時間の平均
+    average_time = total_time / num_simulation
+    print("Average computation time of {0} iterations: {1}".format(num_iter, average_time))
 
-    best = np.squeeze(bo.current_best[1])
-    optimum.append(best)
-    num.append(0)
 
-    for i in range(itertimes):
-        bo.update()
-        best = np.squeeze(bo.current_best[1])
-        optimum.append(best)
-        num.append(i+1)
+    #####################
+    ## 結果をプロットする ##
+    #####################
 
-    plt.plot(num,optimum)
+    # 最適化の履歴を縦に並べる
+    hist = np.array([result["opt_f_hist"] for result in results])
+
+    # 平均と標準偏差をとる
+    mean = np.mean(hist,axis=0)
+    sigma = np.std(hist, axis=0, ddof=1)
+
+    # 平均と標準偏差をプロット
+    x = np.arange(num_iter) + 1
+    plt.plot(x, mean, color='b')
+    plt.fill_between(x, mean-sigma, mean+sigma, alpha=0.5, color='b')
+    # 最適値を赤い水平線でプロット
+    MINIMUM_BRANIN_MOD = -15.31007
+    plt.axhline(y=MINIMUM_BRANIN_MOD, color='red')
+
+    plt.legend(('GP-MI',))
+    plt.xlim(0, num_iter)
     plt.xlabel("Number of iteration")
-    plt.ylabel("Optimum value")
-    plt.title("BO GP-MI")
+    plt.ylabel("Minimimum function value")
+    plt.title("Modified Branin function")
+
+    plt.savefig('result01_figure.pdf')
     plt.show()
 
 
-if __name__=='__main__':
-
-    func = branin_modified
-
-    num_dims = 2
-
-    # 最初の一点を除く探索回数
-    num_iter = 10
-
-    lower = np.array([-5,0]) # 下界
-    upper = np.array([10,15]) # 上界
-
-    acq_options = {"mcmc_iters": 300, "burnin": 3000}
-
-    bo = hslbo.BO(func, num_dims, lower, upper, acq_name="mutual_information", acq_options=acq_options)
-
-    bo.sequential_update(num_iter)
-    #sequential_plot(bo, 300)
-
-    inputs = bo.inputs
-    outputs = bo.values
-    current_best = bo.current_best
-
-    print("Inputs:\n{0}".format(inputs))
-    print("Outputs:\n{0}".format(outputs))
-    print("Current optimal point:\n{0}".format(current_best[0]))
-    print("Current optimum:\n{0}".format(current_best[1]))
+    #グラフのプロットに用いた結果を保存する．
+    #np.savez('test.npz', mean=mean, sigma=sigma)

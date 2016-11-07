@@ -16,7 +16,7 @@ from ..model.gp import GP
 from ..utils.multistart_minimizer import multistart_minimizer
 
 
-DEFAULT_NUM_CANDIDATE = 100
+DEFAULT_NUM_CANDIDATE = 300
 
 DEFAULT_MCMC_ITERS = 10
 DEFAULT_BURNIN     = 100
